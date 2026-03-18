@@ -18,5 +18,12 @@ jobs:
         with:
           python-version: '3.11'
 
+- name: Install dependencies
+        run: pip install requests
+
       - name: Run script
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
         run: python script.py
