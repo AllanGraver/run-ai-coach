@@ -1,0 +1,22 @@
+name: Daily test run
+
+on:
+  schedule:
+    - cron: '15 5 * * *'   # Every day at 05:15 UTC
+  workflow_dispatch:      # Allow manual run
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run script
+        run: python script.py
