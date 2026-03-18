@@ -2,26 +2,30 @@ name: Daily test run
 
 on:
   schedule:
-    - cron: '15 5 * * *'   # Every day at 05:15 UTC
-  workflow_dispatch:      # Allow manual run
+    # Kører hver dag kl. 05:15 UTC (≈ 06:15 DK vintertid, 07:15 DK sommertid)
+    - cron: '15 5 * * *'
+  workflow_dispatch:  # gør at du kan starte den manuelt fra Actions
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run script
+      - name: Run Strava fetch script
         env:
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
           STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
