@@ -40,5 +40,4 @@ def main():
     print("✅ OK: access_token received (not printed).")
 
 if __name__ == "__main__":
-    main()
-``
+    main()``
