@@ -1,0 +1,84 @@
+name: Daily Strava Fetch
+
+on:
+  schedule:
+    # Kører hver dag kl. 05:15 UTC (≈ 06:15 DK vintertid, 07:15 DK sommertid)
+    - cron: "15 5 * * *"
+  workflow_dispatch:
+
+# Giver workflow lov til at skrive (commit/push) til repo'et
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-strava-fetch
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # (Valgfrit, men anbefalet) verificér at secrets er tilgængelige i dette step
+      - name: Verify Strava secrets are present (safe)
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+        run: |
+          set -e
+          [ -n "$STRAVA_CLIENT_ID" ] || (echo "❌ Missing STRAVA_CLIENT_ID" && exit 1)
+          [ -n "$STRAVA_CLIENT_SECRET" ] || (echo "❌ Missing STRAVA_CLIENT_SECRET" && exit 1)
+          [ -n "$STRAVA_REFRESH_TOKEN" ] || (echo "❌ Missing STRAVA_REFRESH_TOKEN" && exit 1)
+          echo "✅ Secrets present (values not shown)"
+
+      - name: Run Strava fetch (updates data/activities.json)
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+        run: |
+          python strava_fetch.py
+
+      # Commit + push kun hvis der er ændringer
+      - name: Commit updated Strava data
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Sørg for at filen findes (hvis scriptet opretter den)
+          test -f data/activities.json || (echo "❌ data/activities.json not found" && exit 1)
+
+          git add data/activities.json
+
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update Strava activities $(date -u +%F)"
+          git push
+
+      # Nice-to-have: upload filen som artifact (nem at hente fra Actions)
+      - name: Upload activities.json artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: strava-activities
+          path: data/activities.json
