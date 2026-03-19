@@ -14,9 +14,9 @@ jobs:
       
       - name: Verify secrets are present
         run: |
-        test -n "$STRAVA_CLIENT_ID" || exit 1
-        test -n "$STRAVA_CLIENT_SECRET" || exit 1
-        test -n "$STRAVA_REFRESH_TOKEN" || exit 1
+          test -n "$STRAVA_CLIENT_ID" || exit 1
+          test -n "$STRAVA_CLIENT_SECRET" || exit 1
+          test -n "$STRAVA_REFRESH_TOKEN" || exit 1
       
       - name: Checkout repository
         uses: actions/checkout@v4
