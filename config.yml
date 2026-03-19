@@ -1,0 +1,23 @@
+report:
+  # Hvem skal have mailen?
+  email_enabled: true
+  email_to: "allangraver@gmail.com"
+
+  # Emne-prefix
+  subject_prefix: "🏃‍♂️ Ugerapport"
+
+analysis:
+  # Hvis du har pulsdata: sæt HRmax og HRrest for TRIMP
+  hr_max: 190
+  hr_rest: 50
+  sex: "male"   # male/female (bruges kun til TRIMP vægtning)
+
+  # Threshold pace til pTSS fallback (min/km). Brug fx din ca. 1t race-pace/10K-ish
+  threshold_pace_min_per_km: 4.20
+
+  # VO2max estimat beregnes bedst på "hårde" ture. Vi filtrerer:
+  vo2:
+    min_duration_min: 6
+    max_duration_min: 60
+    min_distance_km: 1.5
+    max_distance_km: 20
