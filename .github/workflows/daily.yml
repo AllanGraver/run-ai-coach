@@ -24,15 +24,15 @@ jobs:
           if [ -z "$STRAVA_REFRESH_TOKEN" ]; then echo "❌ Missing STRAVA_REFRESH_TOKEN"; exit 1; fi
           echo "✅ All required secrets are present (values not shown)."
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
       - name: Strava connection health-check
         env:
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
           STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
         run: python strava_healthcheck.py 
-      
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
