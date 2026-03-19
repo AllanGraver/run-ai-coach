@@ -21,3 +21,15 @@ analysis:
     max_duration_min: 60
     min_distance_km: 1.5
     max_distance_km: 20
+
+
+coach:
+  enabled: true
+  tone: "friendly"   # friendly | direct
+  # Belastningsregler
+  load_increase_warn_pct: 20        # advar hvis uge-load stiger >20% ift. 4-ugers snit
+  ac_ratio_high: 1.30               # Acute:Chronic ratio høj
+  ac_ratio_low: 0.80                # Acute:Chronic ratio lav
+  # Intensitetsbalance (baseret på gennemsnitspuls pr tur)
+  easy_share_min: 0.70              # anbefal mindst 70% "easy" ture
+  long_run_min_km: 16               # minimum for at tælle som "lang tur"
