@@ -1,13 +1,16 @@
+
 name: Weekly running report
 
 on:
   schedule:
-    # Mandag 06:30 UTC (≈ 07:30 DK vintertid / 08:30 sommertid)
     - cron: "30 6 * * 1"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   weekly-report:
@@ -31,12 +34,9 @@ jobs:
 
       - name: Generate weekly report + send email
         env:
-          # Strava secrets (hvis du senere vil udvide scriptet til at hente fresh data her også)
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
           STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
-
-          # SMTP secrets
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
@@ -62,7 +62,7 @@ jobs:
           git push
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: weekly-report
           path: reports/weekly_latest.md
