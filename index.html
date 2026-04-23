@@ -1,223 +1,96 @@
-<!doctype html>
-<html lang="da">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Træningsoverblik</title>
-
-  <!-- Optional: system font stack -->
-  <link rel="stylesheet" href="assets/css/styles.css" />
-</head>
-
-<body class="theme-dark">
-  <!-- Topbar -->
-  <header class="topbar" role="banner">
-    <div class="container topbar__inner">
-      <div class="topbar__title">
-        <h1 class="h1">Træningsoverblik</h1>
-        <p class="muted">
-          Opdateret: <time id="updatedAt" datetime=""></time>
-        </p>
+<main class="container">
+  <!-- Header row -->
+  <section class="row row--top">
+    <header class="page-head">
+      <h1>Dashboard</h1>
+      <div class="range-tabs" role="tablist">
+        <button class="tab is-active" data-range="7d">7d</button>
+        <button class="tab" data-range="14d">14d</button>
+        <button class="tab" data-range="28d">28d</button>
+        <button class="tab" data-range="12w">12 uger</button>
+        <button class="tab" data-range="6m">6 mdr</button>
       </div>
+    </header>
+  </section>
 
-      <!-- Period selector -->
-      <nav class="period" aria-label="Vælg periode">
-        <div class="period__tabs" role="tablist" aria-label="Periode">
-          <button class="tab is-active" role="tab" aria-selected="true" data-range="7d">7 dage</button>
-          <button class="tab" role="tab" aria-selected="false" data-range="14d">14 dage</button>
-          <button class="tab" role="tab" aria-selected="false" data-range="28d">28 dage</button>
-          <button class="tab" role="tab" aria-selected="false" data-range="12w">12 uger</button>
-          <button class="tab" role="tab" aria-selected="false" data-range="6m">6 mdr</button>
-        </div>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container" role="main">
-    <!-- 1) Pulse Card (status + korte konklusioner) -->
-    <section class="card pulse" aria-labelledby="pulseTitle">
-      <div class="card__header">
-        <h2 id="pulseTitle" class="h2">Status</h2>
-
-        <!-- readiness badge -->
-        <div class="badge" id="readinessBadge" data-status="green" aria-label="Træningsstatus">
-          <span class="badge__dot" aria-hidden="true"></span>
-          <span class="badge__text" id="readinessText">Stabil og svagt stigende</span>
-        </div>
+  <!-- Grid -->
+  <section class="grid">
+    <!-- Big Status -->
+    <article class="card card--wide" id="cardStatus">
+      <div class="card__head">
+        <h2>Status</h2>
+        <span class="badge" data-status="green" id="statusBadge">Stabil</span>
       </div>
+      <p class="big" id="statusHeadline">✅ Stabil og svagt stigende</p>
+      <ul class="bullets" id="statusBullets"></ul>
+    </article>
 
-      <div class="card__content">
-        <p class="pulse__headline" id="pulseHeadline">
-          ✅ Træningen er stabil og svagt stigende
-        </p>
+    <!-- KPIs -->
+    <article class="card kpi">
+      <div class="kpi__label">Distance</div>
+      <div class="kpi__value" id="kpiDistance">—</div>
+      <div class="kpi__delta" id="kpiDistanceDelta">—</div>
+    </article>
 
-        <ul class="pulse__bullets" id="pulseBullets">
-          <li>God kontinuitet de sidste 2 uger.</li>
-          <li>Volumen stiger uden store spring.</li>
-          <li>Let balance mellem let og kvalitet.</li>
-        </ul>
+    <article class="card kpi">
+      <div class="kpi__label">Træningspas</div>
+      <div class="kpi__value" id="kpiRuns">—</div>
+      <div class="kpi__delta" id="kpiRunsDelta">—</div>
+    </article>
 
-        <p class="muted">
-          Periode: <span id="periodLabel">7 dage</span>
-        </p>
-      </div>
-    </section>
+    <article class="card kpi">
+      <div class="kpi__label">Gns. tempo</div>
+      <div class="kpi__value" id="kpiPace">—</div>
+      <div class="kpi__delta muted" id="kpiPaceHint">—</div>
+    </article>
 
-    <!-- 2) KPI cards (max 4) -->
-    <section class="kpis" aria-label="Nøgletal">
-      <article class="card kpi" aria-label="Distance">
-        <div class="kpi__label">Distance</div>
-        <div class="kpi__value" id="kpiDistance">—</div>
-        <div class="kpi__delta" id="kpiDistanceDelta">—</div>
-      </article>
-
-      <article class="card kpi" aria-label="Træningspas">
-        <div class="kpi__label">Træningspas</div>
-        <div class="kpi__value" id="kpiRuns">—</div>
-        <div class="kpi__delta" id="kpiRunsDelta">—</div>
-      </article>
-
-      <article class="card kpi" aria-label="Gennemsnitstempo">
-        <div class="kpi__label">Gns. tempo</div>
-        <div class="kpi__value" id="kpiPace">—</div>
-        <div class="kpi__delta muted" id="kpiPaceHint">—</div>
-      </article>
-
-      <article class="card kpi" aria-label="Længste tur">
-        <div class="kpi__label">Længste tur</div>
-        <div class="kpi__value" id="kpiLongest">—</div>
-        <div class="kpi__delta" id="kpiLongestDelta">—</div>
-      </article>
-    </section>
-
-    <!-- 3) Trend chart (ét diagram, roligt) -->
-    <section class="card chart" aria-labelledby="trendTitle">
-      <div class="card__header">
-        <h2 id="trendTitle" class="h2">Trend</h2>
-
-        <!-- optional metric selector -->
-        <div class="segmented" role="group" aria-label="Vælg trend-måling">
-          <button class="segmented__btn is-active" data-metric="weekly_distance">Distance</button>
-          <button class="segmented__btn" data-metric="weekly_time">Tid</button>
-          <button class="segmented__btn" data-metric="weekly_runs">Pas</button>
+    <!-- Trend -->
+    <article class="card card--wide" id="cardTrend">
+      <div class="card__head">
+        <h2>Trend</h2>
+        <div class="segmented">
+          <button class="seg is-active" data-metric="distance">Distance</button>
+          <button class="seg" data-metric="load">Load</button>
+          <button class="seg" data-metric="runs">Pas</button>
         </div>
       </div>
+      <div class="chart" id="trendChart"></div>
+      <p class="muted" id="trendCaption"></p>
+    </article>
 
-      <div class="card__content">
-        <!-- Chart placeholder (Canvas/SVG injected by JS) -->
-        <div class="chart__canvas" id="trendChart" aria-label="Trenddiagram" role="img">
-          <!-- JS can render an SVG/Canvas here -->
-        </div>
-
-        <p class="chart__caption" id="trendCaption">
-          — 
-        </p>
+    <!-- AI Insights -->
+    <article class="card" id="cardAI">
+      <div class="card__head">
+        <h2>🧠 Indsigt</h2>
       </div>
-    </section>
+      <p class="big" id="aiHeadline">—</p>
+      <ul class="bullets" id="aiBullets"></ul>
+    </article>
 
-    <!-- 4) AI insight box (coach text) -->
-    <section class="card insight" aria-labelledby="insightTitle">
-      <div class="card__header">
-        <h2 id="insightTitle" class="h2">🧠 Træningsindsigt</h2>
+    <!-- Recent activities -->
+    <article class="card" id="cardRecent">
+      <div class="card__head">
+        <h2>Seneste ture</h2>
+        #activitiesSe alle</a>
       </div>
+      <ul class="activity-list" id="recentList"></ul>
+    </article>
 
-      <div class="card__content">
-        <p class="insight__headline" id="aiHeadline">—</p>
-        <ul class="insight__list" id="aiBullets">
-          <!-- filled by JS -->
-        </ul>
-
-        <details class="details" id="weeklyReportDetails">
-          <summary>Læs ugereport</summary>
-          <!-- Option A: render markdown to HTML -->
-          <div class="markdown" id="weeklyReportContent">
-            <!-- JS inserts rendered markdown here -->
+    <!-- Details (collapsed) -->
+    <article class="card card--wide" id="cardDetails">
+      <details>
+        <summary>Vis detaljer</summary>
+        <div class="details-grid">
+          <div class="mini">
+            <h3>Recovery</h3>
+            <div id="recoveryWidget">—</div>
           </div>
-          <!-- Option B: link to raw markdown -->
-          <p class="muted">
-            <a href="data/weekly-report.md" target="_blank" rel="noopener">Åbn som Markdown</a>
-          </p>
-        </details>
-      </div>
-    </section>
-
-    <!-- 5) Optional: Recent activities (minimal list, not overwhelming) -->
-    <section class="card activities" aria-labelledby="activitiesTitle">
-      <div class="card__header">
-        <h2 id="activitiesTitle" class="h2">Seneste ture</h2>
-        <a class="link" href="#all-activities" id="seeAllLink">Se alle</a>
-      </div>
-
-      <div class="card__content">
-        <ul class="activity-list" id="activityList" aria-label="Liste over seneste løbeture">
-          <!-- JS inserts list items -->
-          <!-- Example item structure:
-          <li class="activity">
-            <div class="activity__main">
-              <div class="activity__title">Easy run</div>
-              <div class="activity__meta muted">Man • 8.2 km • 42:10</div>
-            </div>
-            <div class="activity__side">
-              <div class="activity__pace">5:09/km</div>
-              <div class="activity__hr muted">148 bpm</div>
-            </div>
-          </li>
-          -->
-        </ul>
-      </div>
-    </section>
-
-    <!-- 6) “Show details” accordion (progressive disclosure) -->
-    <section class="card details-card" aria-labelledby="detailsTitle">
-      <div class="card__header">
-        <h2 id="detailsTitle" class="h2">Detaljer</h2>
-        <p class="muted">Åbn kun hvis du vil nørde lidt 🤓</p>
-      </div>
-
-      <div class="card__content">
-        <details class="details" id="distributionDetails">
-          <summary>Intensitetsfordeling</summary>
-          <div class="grid-2">
-            <div class="mini-card">
-              <div class="mini-card__label">Easy</div>
-              <div class="mini-card__value" id="distEasy">—</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-card__label">Hard</div>
-              <div class="mini-card__value" id="distHard">—</div>
-            </div>
+          <div class="mini">
+            <h3>Advarsler</h3>
+            <ul id="flagsList"></ul>
           </div>
-          <p class="muted" id="distributionHint">—</p>
-        </details>
-
-        <details class="details" id="loadDetails">
-          <summary>Belastning og advarsler</summary>
-          <ul class="flags" id="flagsList">
-            <!-- JS inserts warnings like:
-            <li class="flag flag--warn">⚠️ Belastningen steg 18% vs forrige periode</li>
-            -->
-          </ul>
-        </details>
-
-        <details class="details" id="dataDetails">
-          <summary>Datagrundlag</summary>
-          <p class="muted">
-            Data er hentet fra dine aktiviteter og aggregeret til trends. GPS-spor gemmes ikke.
-          </p>
-          <pre class="code" id="debugMeta" aria-label="Meta data">—</pre>
-        </details>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer" role="contentinfo">
-    <div class="container footer__inner">
-      <p class="muted">Strava-inspireret dashboard • Bygget med GitHub Pages</p>
-    </div>
-  </footer>
-
-  <!-- App scripts -->
-  <script src="assets/js/app.js" defer></script>
-</body>
-</html>
-``
+        </div>
+      </details>
+    </article>
+  </section>
+</main>
